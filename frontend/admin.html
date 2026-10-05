@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TempText — Admin Panel</title>
+  <meta name="description" content="Admin panel for managing uploaded temporary files.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container admin-container">
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav" aria-label="Main Navigation">
+      <a href="index.html" class="nav-brand">
+        <svg class="nav-brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        <span class="nav-brand-name">TempText</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">← Back to Upload</a>
+      </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <div class="admin-header-title">
+        <h1 class="brand-title">Admin Panel</h1>
+        <span class="admin-badge">Management</span>
+      </div>
+      <p class="brand-description">
+        View and manage all active hosted text files.
+      </p>
+    </header>
+
+    <!-- Main Admin Content Area -->
+    <main class="app-main">
+
+      <!-- Dynamic Alert Banner -->
+      <div id="admin-alert" class="alert alert-danger hidden" role="alert" aria-live="assertive">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="admin-alert-message" class="alert-message"></span>
+        <button id="admin-alert-close" class="alert-close-btn" aria-label="Dismiss message">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Quick Metrics Bar -->
+      <div class="admin-stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Active Files</span>
+          <span id="stat-total-files" class="stat-value">3</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Storage</span>
+          <span id="stat-total-size" class="stat-value">4.2 KB</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Max File Expiry</span>
+          <span class="stat-value">48 Hours</span>
+        </div>
+      </div>
+
+      <!-- Main Files Table Card -->
+      <section class="card admin-table-card">
+        
+        <!-- Table Controls (Search & Refresh) -->
+        <div class="table-controls">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="admin-search-input" class="search-input" placeholder="Filter files by name or URL...">
+          </div>
+          <button type="button" id="admin-refresh-btn" class="btn btn-secondary btn-sm" title="Refresh files list">
+            <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+            <span>Refresh</span>
+          </button>
+        </div>
+
+        <!-- File Table Container -->
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Filename</th>
+                <th>Size</th>
+                <th>Uploaded</th>
+                <th>Expires In</th>
+                <th>Public URL</th>
+                <th class="text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-files-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+
+          <!-- Empty State Container -->
+          <div id="admin-empty-state" class="admin-empty-state hidden">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            <p>No active files hosted on the server.</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Admin Delete Confirmation Modal -->
+    <div id="admin-delete-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+      <div class="modal-card">
+        <h3 id="admin-modal-title" class="modal-title">Delete File (Admin)?</h3>
+        <p class="modal-body">Are you sure you want to delete <strong id="admin-delete-filename">filename.txt</strong>? This file will be immediately removed from storage.</p>
+        <div class="modal-actions">
+          <button type="button" id="admin-modal-cancel" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="admin-modal-confirm" class="btn btn-danger">Delete File</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span class="footer-item">TempText Admin Console</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-item">Open Source</span>
+        <span class="footer-separator">•</span>
+        <a href="index.html" class="footer-link">Upload Page</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

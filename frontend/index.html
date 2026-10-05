@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TempText — Temporary Text File Sharing</title>
+  <meta name="description" content="Upload and temporarily share text files. Access them from anywhere using a simple URL or curl command.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-nav" aria-label="Main Navigation">
+      <a href="index.html" class="nav-brand">
+        <svg class="nav-brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        <span class="nav-brand-name">TempText</span>
+      </a>
+      <div class="nav-links">
+        <a href="admin.html" class="nav-link">Admin Panel</a>
+      </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="app-header">
+      <h1 class="brand-title">TempText</h1>
+      <p class="brand-description">
+        Upload and temporarily share text files.
+      </p>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+
+      <!-- Dynamic Error Alert Banner -->
+      <div id="error-alert" class="alert alert-danger hidden" role="alert" aria-live="assertive">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="error-message" class="alert-message"></span>
+        <button id="error-close-btn" class="alert-close-btn" aria-label="Dismiss error">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- State 1: Main Upload Form Section -->
+      <section id="upload-section" class="card">
+        
+        <!-- Drag and Drop Dropzone -->
+        <div id="drop-zone" class="drop-zone" tabindex="0" role="region" aria-label="File upload dropzone">
+          <input type="file" id="file-input" class="visually-hidden" accept=".txt,.md,.csv,.json,.py,.js,.html,.css" aria-label="Choose text file to upload">
+          
+          <!-- Empty State -->
+          <div id="drop-zone-empty" class="drop-zone-content">
+            <div class="drop-icon-wrapper">
+              <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <p class="drop-zone-prompt">
+              Drag and drop your text file here, or
+            </p>
+            <button type="button" id="browse-btn" class="btn btn-secondary">
+              Choose File
+            </button>
+          </div>
+
+          <!-- File Selected State -->
+          <div id="drop-zone-selected" class="drop-zone-content hidden">
+            <div class="selected-file-card">
+              <div class="file-icon-wrapper">
+                <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+              </div>
+              <div class="file-meta">
+                <span id="selected-filename" class="file-name">python.txt</span>
+                <span id="selected-filesize" class="file-size">0 KB</span>
+              </div>
+              <button type="button" id="remove-file-btn" class="btn-icon" aria-label="Remove selected file" title="Remove file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Meta Indicators -->
+        <div class="upload-meta-info">
+          <span class="meta-item">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Maximum file size: 10 MB
+          </span>
+          <span class="meta-item">
+            <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Text files only
+          </span>
+        </div>
+
+        <!-- Action Button -->
+        <div class="action-bar">
+          <button type="button" id="upload-btn" class="btn btn-primary btn-block" disabled>
+            Upload File
+          </button>
+        </div>
+
+      </section>
+
+      <!-- State 2: Upload Progress Section -->
+      <section id="progress-section" class="card hidden" aria-live="polite">
+        <div class="progress-container">
+          <div class="progress-header">
+            <span class="progress-title">Uploading...</span>
+            <span id="progress-percent" class="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-element">
+            <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+          </div>
+          <p id="uploading-filename" class="uploading-file-text">uploading file...</p>
+        </div>
+      </section>
+
+      <!-- State 3: Upload Successful Result Section -->
+      <section id="success-section" class="card hidden">
+        
+        <div class="success-header">
+          <div class="success-badge">
+            <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <span>Upload successful</span>
+          </div>
+          
+          <div class="file-summary">
+            <span class="summary-label">File:</span>
+            <span id="result-filename" class="summary-value">python.txt</span>
+          </div>
+
+          <div id="expiry-badge" class="expiry-badge">
+            <svg class="timer-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="countdown-timer">Expires in 47 hours 59 minutes</span>
+          </div>
+        </div>
+
+        <!-- URL Field -->
+        <div class="output-group">
+          <label for="public-url-input" class="output-label">URL:</label>
+          <input type="text" id="public-url-input" class="code-input" readonly value="">
+        </div>
+
+        <!-- Result Action Buttons Grid -->
+        <div class="result-actions-grid">
+          <button type="button" id="copy-url-btn" class="btn btn-secondary">
+            <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span class="btn-text">Copy URL</span>
+          </button>
+
+          <button type="button" id="download-file-btn" class="btn btn-secondary">
+            <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span class="btn-text">Download File</span>
+          </button>
+
+          <button type="button" id="copy-curl-btn" class="btn btn-secondary">
+            <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            <span class="btn-text">Copy curl Command</span>
+          </button>
+        </div>
+
+        <!-- Expiration & Deletion Notice -->
+        <div class="expiration-notice">
+          <p class="notice-text">File will be automatically deleted after 48 hours.</p>
+        </div>
+
+        <!-- Uploader Private Delete Action -->
+        <div class="uploader-delete-box">
+          <div class="uploader-delete-info">
+            <span class="uploader-tag">Uploader Control</span>
+            <p class="uploader-note">Only you (the uploader) can delete this file early.</p>
+          </div>
+          <button type="button" id="delete-file-btn" class="btn btn-danger-outline">
+            <svg class="btn-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Delete File</span>
+          </button>
+        </div>
+
+        <!-- Upload Another Action -->
+        <div class="action-bar margin-top-lg">
+          <button type="button" id="upload-another-btn" class="btn btn-outline btn-block">
+            Upload Another File
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Confirmation Modal for Delete Action -->
+    <div id="delete-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <h3 id="modal-title" class="modal-title">Delete Uploaded File?</h3>
+        <p class="modal-body">This will permanently remove the file from the server immediately. This action cannot be undone.</p>
+        <div class="modal-actions">
+          <button type="button" id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+          <button type="button" id="modal-confirm-delete-btn" class="btn btn-danger">Delete Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <span class="footer-item">Upload and temporarily share text files.</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-item">Open Source</span>
+        <span class="footer-separator">•</span>
+        <a href="admin.html" class="footer-link">Admin</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/upload.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
