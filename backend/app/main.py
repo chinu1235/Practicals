@@ -26,8 +26,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="TempText API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["null"],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origins=[
+    "null",
+    "https://practicals-frontend.vercel.app",
+],
+allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=False,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
