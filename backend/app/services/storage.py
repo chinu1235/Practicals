@@ -16,7 +16,7 @@ METADATA_FILE = METADATA_DIR / "files.json"
 MAX_FILE_SIZE = 10 * 1024 * 1024
 RETENTION = timedelta(hours=48)
 ALLOWED_EXTENSIONS = {".txt", ".md", ".csv", ".json", ".py", ".js", ".html", ".css"}
-SAFE_FILENAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,254}$")
+SAFE_FILENAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]{0,254}$")
 storage_lock = asyncio.Lock()
 
 
