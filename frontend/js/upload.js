@@ -3,7 +3,7 @@
  */
 
 const CONFIG = {
-  API_BASE_URL: window.TEMPTEXT_API_BASE || 'http://localhost:8000',
+  API_BASE_URL: window.TEMPTEXT_API_BASE || 'https://practicals-fcx9.onrender.com',
   ENDPOINTS: {
     UPLOAD: '/api/upload',
     DELETE: '/api/delete',       // DELETE /api/delete/{secureToken}
